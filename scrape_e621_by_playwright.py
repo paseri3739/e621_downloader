@@ -5,27 +5,32 @@ import requests
 
 
 def scrape_url_with_playwright(url):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        page = browser.new_page()
+    # Playwright の初期化
+    p = sync_playwright().start()
 
-        page.goto(url)
-        # JavaScriptを実行してページをフルスクロール（必要に応じて）
-        page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+    # ブラウザの起動
+    browser = p.chromium.launch(headless=False)
+    page = browser.new_page()
 
-        page.wait_for_timeout(1000)
-        if page.locator("#guest-warning-accept"):
-            page.click("#guest-warning-accept")
+    page.goto(url)
+    # JavaScriptを実行してページをフルスクロール（必要に応じて）
+    page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
 
-        page.wait_for_timeout(2000)
+    page.wait_for_timeout(1000)
+    if page.locator("#guest-warning-accept"):
+        page.click("#guest-warning-accept")
 
-        article_tags = page.query_selector_all("article")
+    page.wait_for_timeout(2000)
 
-        large_file_urls = [
-            tag.get_attribute("data-large-file-url") for tag in article_tags
-        ]
+    article_tags = page.query_selector_all("article")
 
-        browser.close()
+    large_file_urls = [tag.get_attribute("data-large-file-url") for tag in article_tags]
+
+    # ブラウザを閉じない
+    # browser.close()
+
+    # Playwright セッションを終了する（ブラウザは開いたまま）
+    p.stop()
 
     return large_file_urls
 
