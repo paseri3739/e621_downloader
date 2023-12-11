@@ -6,7 +6,9 @@ import time
 
 def scrape_url(url):
     # カスタムユーザーエージェントを設定
-    headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0"
+    }
 
     # 指定したURLからHTMLを取得（ユーザーエージェントを設定）
     response = requests.get(url, headers=headers)

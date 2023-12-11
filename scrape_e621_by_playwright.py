@@ -10,16 +10,20 @@ def scrape_url_with_playwright(url):
         page = browser.new_page()
 
         page.goto(url)
-
         # JavaScriptを実行してページをフルスクロール（必要に応じて）
         page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
 
-        # 一定時間待つ（必要に応じて）
+        page.wait_for_timeout(1000)
+        if page.locator("#guest-warning-accept"):
+            page.click("#guest-warning-accept")
+
         page.wait_for_timeout(2000)
 
         article_tags = page.query_selector_all("article")
 
-        large_file_urls = [tag.get_attribute("data-large-file-url") for tag in article_tags]
+        large_file_urls = [
+            tag.get_attribute("data-large-file-url") for tag in article_tags
+        ]
 
         browser.close()
 
@@ -42,14 +46,18 @@ def download_images(large_file_urls):
         time.sleep(2)
 
 
-# スクレイピング対象のURL
-url = "https://e621.net/posts?tags=kuromu"
+def main():
+    # スクレイピング対象のURL
+    url = "https://e621.net/posts?tags=kuromu"
 
-try:
-    large_file_urls = scrape_url_with_playwright(url)
-    print("Found data-large-file-url(s):", large_file_urls)
-    print(f"There are {len(large_file_urls)} URL(s) in the page.")
+    try:
+        large_file_urls = scrape_url_with_playwright(url)
+        print("Found data-large-file-url(s):", large_file_urls)
+        print(f"There are {len(large_file_urls)} URL(s) in the page.")
 
-    download_images(large_file_urls)
-except Exception as e:
-    print("An error occurred:", e)
+        download_images(large_file_urls)
+    except Exception as e:
+        print("An error occurred:", e)
+
+
+main()
