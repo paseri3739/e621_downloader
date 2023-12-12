@@ -108,7 +108,8 @@ async function main() {
     try {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
-        const largeFileUrls = await getAllImageUrl(page, "kuromu");
+        const searchQuery: string = "kuromu"
+        const largeFileUrls = await getAllImageUrl(page, searchQuery);
         await downloadImages(page, largeFileUrls);
         await page.close();
         await browser.close();
