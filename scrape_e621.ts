@@ -6,9 +6,13 @@ dotenv.config();
 const USER_NAME = process.env.USER_NAME;
 const PASSWORD = process.env.PASSWORD;
 
-async function login(url: string): Promise<Page> {
+async function initializeBrowser(): Promise<[Browser, Page]> {
     const browser: Browser = await chromium.launch({ headless: false });
     const page: Page = await browser.newPage();
+    return [browser, page];
+}
+
+async function login(page: Page, url: string): Promise<Page> {
 
     await page.goto(url);
 
@@ -98,13 +102,16 @@ async function downloadImages(page: Page, largeFileUrls: string[]) {
 }
 
 
+
 async function main() {
     const initUrl = "https://e621.net/session/new";
     try {
-        const page = await login(initUrl);
+        const [browser, page] = await initializeBrowser();
+        await login(page, initUrl);
         const largeFileUrls = await getAllImageUrl(page, "kuromu");
         await downloadImages(page, largeFileUrls);
-        await page.close()
+        await page.close();
+        await browser.close();
         return;
     } catch (error) {
         console.error("An error occurred:", error);
