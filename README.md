@@ -6,6 +6,7 @@ This script will retrieve the e621 image URLs corresponding to the search query 
 
 ```
 $ npm install
+$ npm install @types/dotenv --save-dev
 ```
 
 to install dependencies. then add ".env" file and edit,

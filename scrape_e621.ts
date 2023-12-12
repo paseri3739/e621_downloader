@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import fs from 'fs';
 import { Browser, ElementHandle, Page, Response, chromium, } from 'playwright';
 
-dotenv.config();
+
 const USER_NAME = process.env.USER_NAME;
 const PASSWORD = process.env.PASSWORD;
 
