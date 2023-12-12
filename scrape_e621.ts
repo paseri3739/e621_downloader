@@ -28,8 +28,10 @@ async function login(url: string): Promise<Page> {
 async function getAllImageUrl(page: Page, searchQuery: string): Promise<string[]> {
 
     // 検索クエリを入力して検索結果画面に遷移
-    page.fill("#tags", searchQuery);
-    page.click('button i.fa-solid.fa-magnifying-glass')
+    await page.click("#tags");
+    await page.fill("#tags", searchQuery);
+    await page.click('button i.fa-solid.fa-magnifying-glass');
+    await page.waitForSelector("#posts > div.paginator");
 
     // 最後のnumbered-pageクラスのテキストを整数型で取得
     const lastNumberedPageNumber = await page.evaluate(() => {
@@ -102,7 +104,7 @@ async function main() {
         const page = await login(initUrl);
         const largeFileUrls = await getAllImageUrl(page, "kuromu");
         await downloadImages(page, largeFileUrls);
-        page.close()
+        await page.close()
         return;
     } catch (error) {
         console.error("An error occurred:", error);
