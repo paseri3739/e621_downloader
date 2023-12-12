@@ -34,12 +34,27 @@ async function getAllImageUrl(page: Page, searchQuery: string): Promise<string[]
     // 最後のnumbered-pageクラスのテキストを整数型で取得
     const lastNumberedPageNumber = await page.evaluate(() => {
         const elements = Array.from(document.querySelectorAll('.numbered-page'));
-        const lastElement = elements[elements.length - 1];
-        if (lastElement.textContent) {
-            return parseInt(lastElement.textContent, 10);  // テキストを整数に変換
+        if (elements.length === 0) {
+            // numbered-pageクラスを持つ要素がない場合
+            return 1;
         }
-        return 1;
+
+        const lastElement = elements[elements.length - 1];
+        if (!lastElement) {
+            // 最後の要素が存在しない場合
+            return 1;
+        }
+
+        const link = lastElement.querySelector('a');
+        if (link && link.textContent) {
+            // リンクとテキストが存在する場合
+            return parseInt(link.textContent);
+        } else {
+            // リンクが存在しない、またはテキストがない場合
+            return 1;
+        }
     });
+
     console.log(lastNumberedPageNumber); // コンソールに最後の要素を表示
 
     // 全てのURLを格納する配列
@@ -88,6 +103,7 @@ async function main() {
         const largeFileUrls = await getAllImageUrl(page, "kuromu");
         await downloadImages(page, largeFileUrls);
         page.close()
+        return;
     } catch (error) {
         console.error("An error occurred:", error);
     }
