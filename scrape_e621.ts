@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
-import fetch from 'node-fetch';
 import { chromium } from 'playwright';
 
 dotenv.config();
@@ -35,13 +34,13 @@ async function scrapeUrlWithPlaywright(page: any, query: string) {
     return largeFileUrls;
 }
 
-async function downloadImages(largeFileUrls: string[]) {
+async function downloadImages(page: any, largeFileUrls: string[]) {
     if (!fs.existsSync("./img")) {
         fs.mkdirSync("./img");
     }
 
     for (const [i, url] of largeFileUrls.entries()) {
-        const response = await fetch(url);
+        const response = await page.goto(url);
         const buffer = await response.buffer();
 
         fs.writeFileSync(`./img/image_${i}.jpg`, buffer);
@@ -55,7 +54,7 @@ async function main() {
     try {
         const page = await login(initUrl);
         const largeFileUrls = await scrapeUrlWithPlaywright(page, "");
-        await downloadImages(largeFileUrls);
+        await downloadImages(page, largeFileUrls);
     } catch (e) {
         console.error("An error occurred:", e);
     }
