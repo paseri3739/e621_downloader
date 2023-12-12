@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "e621のページを開いて直リンクのURLを取得、その後ダウンロードするために利用できるようにする。",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

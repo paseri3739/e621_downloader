@@ -1,17 +1,18 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
-import { chromium } from 'playwright';
+import { Browser, ElementHandle, Page, Response, chromium, } from 'playwright';
 
 dotenv.config();
 const USER_NAME = process.env.USER_NAME;
 const PASSWORD = process.env.PASSWORD;
 
-async function login(url: string) {
-    const browser = await chromium.launch({ headless: false });
-    const page = await browser.newPage();
+async function login(url: string): Promise<Page> {
+    const browser: Browser = await chromium.launch({ headless: false });
+    const page: Page = await browser.newPage();
 
     await page.goto(url);
 
+    // R18 dialog
     if (await page.$("#guest-warning-accept")) {
         await page.click("#guest-warning-accept");
     }
@@ -24,39 +25,71 @@ async function login(url: string) {
     return page;
 }
 
-async function scrapeUrlWithPlaywright(page: any, query: string) {
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(2000);
+async function getAllImageUrl(page: Page, searchQuery: string): Promise<string[]> {
 
-    const articleTags = await page.$$("article");
-    const largeFileUrls = await Promise.all(articleTags.map(async (tag: any) => tag.getAttribute("data-large-file-url")));
+    // 検索クエリを入力して検索結果画面に遷移
+    page.fill("#tags", searchQuery);
+    page.click('button i.fa-solid.fa-magnifying-glass')
 
-    return largeFileUrls;
+    // 最後のnumbered-pageクラスのテキストを整数型で取得
+    const lastNumberedPageNumber = await page.evaluate(() => {
+        const elements = Array.from(document.querySelectorAll('.numbered-page'));
+        const lastElement = elements[elements.length - 1];
+        if (lastElement.textContent) {
+            return parseInt(lastElement.textContent, 10);  // テキストを整数に変換
+        }
+        return 1;
+    });
+    console.log(lastNumberedPageNumber); // コンソールに最後の要素を表示
+
+    // 全てのURLを格納する配列
+    let allLargeFileUrls = [];
+    // forでクエリを書き換えてページネーション
+    for (let i = 1; i <= lastNumberedPageNumber; i++) {
+        const url: URL = new URL(page.url());
+        url.searchParams.set('page', i.toString());
+        await page.goto(url.toString()); // URLに移動
+        console.log(`Current URL: ${page.url()}`); // 現在のURLをコンソールに表示
+
+        // ここでページの内容を処理する（スクレイピング、情報の取得など）
+        const articleTags = await page.$$("article");
+        const largeFileUrls = await Promise.all(articleTags.map(async (tag: ElementHandle) => tag.getAttribute("data-large-file-url")));
+        // 取得したURLを配列に追加
+        allLargeFileUrls.push(...largeFileUrls.filter(url => url !== null));
+    }
+    return allLargeFileUrls.filter(url => url !== null) as string[];
 }
 
-async function downloadImages(page: any, largeFileUrls: string[]) {
+async function downloadImages(page: Page, largeFileUrls: string[]) {
     if (!fs.existsSync("./img")) {
         fs.mkdirSync("./img");
     }
 
     for (const [i, url] of largeFileUrls.entries()) {
-        const response = await page.goto(url);
-        const buffer = await response.buffer();
+        const response: Response | null = await page.goto(url, { waitUntil: 'networkidle' });
 
-        fs.writeFileSync(`./img/image_${i}.jpg`, buffer);
-        console.log(`Downloaded ${url} as image_${i}.jpg`);
+        if (response) {
+            const buffer: Buffer = await response.body();
+            fs.writeFileSync(`./img/image_${i}.jpg`, buffer);
+            console.log(`Downloaded ${url} as image_${i}.jpg`);
+        } else {
+            console.log(`Failed to download ${url}`);
+        }
+
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
 }
+
 
 async function main() {
     const initUrl = "https://e621.net/session/new";
     try {
         const page = await login(initUrl);
-        const largeFileUrls = await scrapeUrlWithPlaywright(page, "");
+        const largeFileUrls = await getAllImageUrl(page, "kuromu");
         await downloadImages(page, largeFileUrls);
-    } catch (e) {
-        console.error("An error occurred:", e);
+        page.close()
+    } catch (error) {
+        console.error("An error occurred:", error);
     }
 }
 
