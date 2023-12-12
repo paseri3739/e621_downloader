@@ -7,7 +7,7 @@ const USER_NAME = process.env.USER_NAME;
 const PASSWORD = process.env.PASSWORD;
 
 async function initializeBrowser(): Promise<[Browser, Page]> {
-    const browser: Browser = await chromium.launch({ headless: false });
+    const browser: Browser = await chromium.launch({ headless: true });
     const page: Page = await browser.newPage();
     return [browser, page];
 }
@@ -108,7 +108,7 @@ async function main() {
     try {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
-        const searchQuery: string = "your_search_query_here"
+        const searchQuery: string = "your_query"
         const largeFileUrls = await getAllImageUrl(page, searchQuery);
         await downloadImages(page, largeFileUrls);
         await page.close();

@@ -6,7 +6,8 @@ This script will retrieve the e621 image URLs corresponding to the search query 
 
 ```
 $ npm install
-$ npm install @types/dotenv --save-dev
+$ npm install typescript --save-dev #if required
+$ npx install playwright #if required
 ```
 
 to install dependencies. then add ".env" file and edit,
