@@ -81,12 +81,18 @@ async function getAllImageUrl(page: Page, searchQuery: string): Promise<string[]
     return allLargeFileUrls.filter(url => url !== null) as string[];
 }
 
-async function downloadImages(page: Page, largeFileUrls: string[]) {
+async function downloadImages(page: Page, largeFileUrls: string[], maxDownloadCount: number) {
     if (!fs.existsSync("./img")) {
         fs.mkdirSync("./img");
     }
 
     for (const [i, url] of largeFileUrls.entries()) {
+
+        if (maxDownloadCount > 0 && i >= maxDownloadCount) {
+            console.log(`Reached max download count: ${maxDownloadCount}`);
+            break;
+        }
+
         const response: Response | null = await page.goto(url, { waitUntil: 'networkidle' });
 
         if (response) {
@@ -105,12 +111,25 @@ async function downloadImages(page: Page, largeFileUrls: string[]) {
 
 async function main() {
     const initUrl = "https://e621.net/session/new";
+    // 引数のバリデーション
+    let maxDownloadCount = Infinity;
+    if (process.argv[2]) {
+        const parsedCount = parseInt(process.argv[2], 10);
+
+        if (isNaN(parsedCount) || parsedCount < 0) {
+            console.error("Invalid argument: Max download count must be a non-negative integer.");
+            return;
+        }
+
+        maxDownloadCount = parsedCount;
+    }
+
     try {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
         const searchQuery: string = "your_query"
         const largeFileUrls = await getAllImageUrl(page, searchQuery);
-        await downloadImages(page, largeFileUrls);
+        await downloadImages(page, largeFileUrls, maxDownloadCount);
         await page.close();
         await browser.close();
         return;
