@@ -124,10 +124,17 @@ async function main() {
         maxDownloadCount = parsedCount;
     }
 
+    const searchQuery = process.argv[2]; // コマンドライン引数から検索クエリを取得
+
+    if (!searchQuery) {
+        console.error("No search query provided. Usage: node app.js <search_query>");
+        process.exit(1);
+    }
+
     try {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
-        const searchQuery: string = "your_query"
+        // searchQueryはコマンドライン引数から取得した値を使用
         const largeFileUrls = await getAllImageUrl(page, searchQuery);
         await downloadImages(page, largeFileUrls, maxDownloadCount);
         await page.close();
@@ -137,5 +144,6 @@ async function main() {
         console.error("An error occurred:", error);
     }
 }
+
 
 main();
