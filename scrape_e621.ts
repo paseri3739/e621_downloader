@@ -123,7 +123,7 @@ async function main() {
 
     let maxDownloadCount = Infinity;
     if (process.argv[3]) {
-        const parsedCount = parseInt(process.argv[2], 10);
+        const parsedCount = parseInt(process.argv[3], 10);
 
         if (isNaN(parsedCount) || parsedCount < 0) {
             console.error("Invalid argument: Max download count must be a non-negative integer.");
