@@ -20,6 +20,7 @@ PASSWORD="your_password"
 # how to run
 run
 ```
-ts-node scrape_e621.ts "your_search_query"
+ts-node scrape_e621.ts "your_search_query" number_of_download_limit
 ```
+second argument must be in quotes. third argument is integer.
 the script makes ./img directory. All of your downloaded images there.
