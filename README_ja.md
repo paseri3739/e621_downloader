@@ -1,8 +1,10 @@
 # scrape_e621
 
-This script will retrieve the e621 image URLs corresponding to the search query you specify and make them all available for download.
+このスクリプトはe621にログインして検索クエリを入力し、ページ遷移しながら指定したダウンロード数に達するまでURLをリストアップし、リストアップしたURLを利用して2秒ごとにダウンロードを行う。Playwrightを利用してブラウザ操作を模倣、ログインする手順を踏むことによってe621の未ログインユーザーに対する閲覧制限を回避することができる。
 
-# how to install
+# インストール方法
+
+TypeScriptを利用して開発していますが、まだJavaScriptにコンパイルする方法がよくわかっていないのでJSファイルはありません。ts-nodeで実行してください。依存関係は下のコマンドで解決できると思います。
 
 ```
 $ npm install
@@ -10,17 +12,18 @@ $ npm install typescript --save-dev #if required
 $ npx install playwright #if required
 ```
 
-to install dependencies. then add ".env" file and edit,
+依存関係が解決できたら.envという名前の隠しファイルを作り、以下のように編集します。
 
 ```
 USER_NAME="your_user_name"
 PASSWORD="your_password"
 ```
 
-# how to run
-run
+# 実行
+
+以下のようにコマンドを入力して実行してください。
 ```
 ts-node scrape_e621.ts "your_search_query" number_of_download_limit
 ```
-second argument must be in quotes. third argument is integer.
-the script makes ./img directory. All of your downloaded images there.
+第２引数はクォーテーションマークで囲って検索クエリを入力してください。第３引数には整数を指定します。
+
