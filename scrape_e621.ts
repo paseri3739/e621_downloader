@@ -111,9 +111,18 @@ async function downloadImages(page: Page, largeFileUrls: string[], maxDownloadCo
 
 async function main() {
     const initUrl = "https://e621.net/session/new";
+
+    const searchQuery = process.argv[2]; // コマンドライン引数から検索クエリを取得
+
     // 引数のバリデーション
+
+    if (!searchQuery) {
+        console.error("No search query provided. Usage: node app.js <search_query>");
+        process.exit(1);
+    }
+
     let maxDownloadCount = Infinity;
-    if (process.argv[2]) {
+    if (process.argv[3]) {
         const parsedCount = parseInt(process.argv[2], 10);
 
         if (isNaN(parsedCount) || parsedCount < 0) {
@@ -122,13 +131,6 @@ async function main() {
         }
 
         maxDownloadCount = parsedCount;
-    }
-
-    const searchQuery = process.argv[2]; // コマンドライン引数から検索クエリを取得
-
-    if (!searchQuery) {
-        console.error("No search query provided. Usage: node app.js <search_query>");
-        process.exit(1);
     }
 
     try {
