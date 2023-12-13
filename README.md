@@ -18,8 +18,8 @@ PASSWORD="your_password"
 ```
 
 # how to run
-modify the "searchQuery" variable in "scrape_e621.ts", then run
+run
 ```
-ts-node scrape_e621.ts
+ts-node scrape_e621.ts "your_search_query"
 ```
-the script makes ./img directory.
+the script makes ./img directory. All of your downloaded images there.
