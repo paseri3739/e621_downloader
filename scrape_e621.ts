@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import fs from 'fs';
-import { Browser, ElementHandle, Page, chromium } from 'playwright';
+import { Browser, Page, chromium } from 'playwright';
 
 const USER_NAME = process.env.USER_NAME;
 const PASSWORD = process.env.PASSWORD;
@@ -28,64 +28,56 @@ async function login(page: Page, url: string): Promise<Page> {
     return page;
 }
 
-function getLastNumberedPageNumber() {
-    const elements = Array.from(document.querySelectorAll('.numbered-page'));
-    if (elements.length === 0) {
-        return 1;
-    }
-
-    const lastElement = elements[elements.length - 1];
-    if (!lastElement) {
-        return 1;
-    }
-
-    const link = lastElement.querySelector('a');
-    if (link && link.textContent) {
-        return parseInt(link.textContent);
-    } else {
-        return 1;
-    }
-}
-
-
 async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount: number): Promise<string[]> {
-
-    await page.click("#tags");
-    await page.fill("#tags", searchQuery);
-    await page.waitForTimeout(1000);
+    await page.type("#tags", searchQuery);
     await page.click('button i.fa-solid.fa-magnifying-glass');
     await page.waitForSelector("#posts > div.paginator");
 
-    const lastNumberedPageNumber = await page.evaluate(getLastNumberedPageNumber);
+    const lastNumberedPageNumber = await getLastNumberedPageNumber(page);
 
     console.log(lastNumberedPageNumber);
 
     let allLargeFileUrls = [];
-    let currentCount = 0;
     for (let i = 1; i <= lastNumberedPageNumber; i++) {
-        const url: URL = new URL(page.url());
-        url.searchParams.set('page', i.toString());
-        await page.waitForTimeout(1000);
-        await page.goto(url.toString());
-        console.log(`Current URL: ${page.url()}`);
+        await navigateToPage(page, i);
+        const pageUrls = await extractLargeFileUrlsFromPage(page);
+        allLargeFileUrls.push(...pageUrls);
 
-        const articleTags = await page.$$("article");
-        const largeFileUrls = await Promise.all(articleTags.map(async (tag: ElementHandle) => tag.getAttribute("data-large-file-url")));
-
-        for (const url of largeFileUrls) {
-            if (url !== null) {
-                allLargeFileUrls.push(url);
-                currentCount++;
-                if (currentCount >= maxDownloadCount) {
-                    console.log(`Reached max download count: ${maxDownloadCount}`);
-                    return allLargeFileUrls;
-                }
-            }
+        if (allLargeFileUrls.length >= maxDownloadCount) {
+            console.log(`Reached max download count: ${maxDownloadCount}`);
+            break;
         }
     }
 
-    return allLargeFileUrls;
+    return allLargeFileUrls.slice(0, maxDownloadCount);
 }
+
+async function getLastNumberedPageNumber(page: Page): Promise<number> {
+    return await page.evaluate(() => {
+        const elements = Array.from(document.querySelectorAll('.numbered-page'));
+        return elements.length === 0 ? 1 : parseInt(elements[elements.length - 1].textContent || "1");
+    });
+}
+
+async function navigateToPage(page: Page, pageNumber: number): Promise<void> {
+    const url = new URL(page.url());
+    url.searchParams.set('page', pageNumber.toString());
+    await page.goto(url.toString());
+    console.log(`Navigated to page: ${pageNumber}`);
+}
+
+async function extractLargeFileUrlsFromPage(page: Page): Promise<string[]> {
+    const articleTags = await page.$$("article");
+    const urls = await Promise.all(
+        articleTags.map(async (tag) => {
+            const url = await tag.getAttribute("data-large-file-url");
+            return url || undefined; // nullの場合はundefinedに置き換え
+        })
+    );
+    return urls.filter((url): url is string => url !== undefined); // undefinedを除外
+}
+
+
 
 async function writeImage(page: Page, url: string, index: number) {
     const response = await page.goto(url, { waitUntil: 'networkidle' });
