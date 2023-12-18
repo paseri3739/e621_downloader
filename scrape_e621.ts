@@ -28,6 +28,7 @@ async function login(page: Page, url: string): Promise<Page> {
     return page;
 }
 
+
 async function makeAllImageUrlList(page: Page, searchQuery: string, maxDownloadCount: number): Promise<string[]> {
     await page.fill("#tags", searchQuery);
     await page.click('button i.fa-solid.fa-magnifying-glass');
@@ -108,9 +109,15 @@ async function downloadImages(page: Page, largeFileUrls: string[], maxDownloadCo
     }
 }
 
+async function saveUrlListToJson(largeFileUrls: string[], filename = 'urlList.json') {
+    const jsonData = JSON.stringify(largeFileUrls, null, 2);
+    fs.writeFileSync(filename, jsonData);
+    console.log(`Saved URL list to ${filename}`);
+}
+
 async function main() {
     const initUrl = "https://e621.net/session/new";
-
+    const tempFilename = 'urlList.json';
     const searchQuery = process.argv[2];
 
     if (!searchQuery) {
@@ -134,7 +141,16 @@ async function main() {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
         const largeFileUrls = await makeAllImageUrlList(page, searchQuery, maxDownloadCount);
+
+        // save url as json
+        await saveUrlListToJson(largeFileUrls, tempFilename);
+
         await downloadImages(page, largeFileUrls, maxDownloadCount);
+
+        // remove temp file
+        fs.unlinkSync(tempFilename);
+        console.log(`Deleted temporary file: ${tempFilename}`);
+
         await page.close();
         await browser.close();
         return;
