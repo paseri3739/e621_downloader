@@ -28,17 +28,17 @@ async function login(page: Page, url: string): Promise<Page> {
     return page;
 }
 
-async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount: number): Promise<string[]> {
-    await page.type("#tags", searchQuery);
+async function makeAllImageUrlList(page: Page, searchQuery: string, maxDownloadCount: number): Promise<string[]> {
+    await page.fill("#tags", searchQuery);
     await page.click('button i.fa-solid.fa-magnifying-glass');
     await page.waitForSelector("#posts > div.paginator");
 
-    const lastNumberedPageNumber = await getLastNumberedPageNumber(page);
+    const lastPageNumber = await getLastPageNumber(page);
 
-    console.log(lastNumberedPageNumber);
+    console.log(lastPageNumber + "pages exist");
 
-    let allLargeFileUrls = [];
-    for (let i = 1; i <= lastNumberedPageNumber; i++) {
+    let allLargeFileUrls: string[] = [];
+    for (let i = 1; i <= lastPageNumber; i++) {
         await navigateToPage(page, i);
         const pageUrls = await extractLargeFileUrlsFromPage(page);
         allLargeFileUrls.push(...pageUrls);
@@ -52,7 +52,7 @@ async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount:
     return allLargeFileUrls.slice(0, maxDownloadCount);
 }
 
-async function getLastNumberedPageNumber(page: Page): Promise<number> {
+async function getLastPageNumber(page: Page): Promise<number> {
     return await page.evaluate(() => {
         const elements = Array.from(document.querySelectorAll('.numbered-page'));
         return elements.length === 0 ? 1 : parseInt(elements[elements.length - 1].textContent || "1");
@@ -133,7 +133,7 @@ async function main() {
     try {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
-        const largeFileUrls = await getAllImageUrl(page, searchQuery, maxDownloadCount);
+        const largeFileUrls = await makeAllImageUrlList(page, searchQuery, maxDownloadCount);
         await downloadImages(page, largeFileUrls, maxDownloadCount);
         await page.close();
         await browser.close();
