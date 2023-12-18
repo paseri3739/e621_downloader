@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import { Page } from 'playwright';
-import { navigateToPage } from './domParsers';
 
 export async function makeAllImageUrlList(page: Page, searchQuery: string, maxDownloadCount: number): Promise<string[]> {
     await page.fill("#tags", searchQuery);
