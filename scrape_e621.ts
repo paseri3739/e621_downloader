@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import fs from 'fs';
+import path from 'path';
 import { Browser, Page, chromium } from 'playwright';
 
 const USER_NAME = process.env.USER_NAME;
@@ -115,16 +116,32 @@ async function saveUrlListToJson(largeFileUrls: string[], filename = 'urlList.js
     console.log(`Saved URL list to ${filename}`);
 }
 
+function parseCommandLineArguments() {
+    return process.argv.includes('--save-url');
+}
+
+function showUsageAndExit() {
+    const usage = `Usage: node ${path.basename(__filename)} <search_query> [--max-download-count <count>] [--save-url]
+    <search_query>                : specify search query
+    --max-download-count <count>  : specify maximum download number (optional)
+    --save-url                    : save json temp file (optional)`;
+    console.log(usage);
+    process.exit(1);
+}
+
 async function main() {
     const initUrl = "https://e621.net/session/new";
     const tempFilename = 'urlList.json';
     const searchQuery = process.argv[2];
+    const saveUrl = parseCommandLineArguments();
 
+    if (process.argv.length < 3) {
+        showUsageAndExit();
+    }
     if (!searchQuery) {
         console.error("No search query provided. Usage: node app.js <search_query>");
         process.exit(1);
     }
-
     let maxDownloadCount = Infinity;
     if (process.argv[3]) {
         const parsedCount = parseInt(process.argv[3], 10);
@@ -147,9 +164,11 @@ async function main() {
 
         await downloadImages(page, largeFileUrls, maxDownloadCount);
 
-        // remove temp file
-        fs.unlinkSync(tempFilename);
-        console.log(`Deleted temporary file: ${tempFilename}`);
+        // --save-url が指定されていない場合のみ、一時ファイルを削除
+        if (!saveUrl) {
+            fs.unlinkSync(tempFilename);
+            console.log(`Deleted temporary file: ${tempFilename}`);
+        }
 
         await page.close();
         await browser.close();
