@@ -4,12 +4,10 @@
 
 # インストール方法
 
-TypeScriptを利用して開発していますが、まだJavaScriptにコンパイルする方法がよくわかっていないのでJSファイルはありません。ts-nodeで実行してください。依存関係は下のコマンドで解決できると思います。npmとかのインストール方法については調べればいくらでも出てくるので割愛します。最後のコマンドは必要ない場合もあるのでとりあえず実行してみて、エラー表示が出たら表示に書かれているコマンドを実行してplaywrightをインストールしてください。
+TypeScriptを利用して開発していますが、コンパイル済のscrape_e621.jsをnodeで実行できます。
 
 ```
 $ npm install
-$ npm install typescript --save-dev #if required
-$ npx install playwright #if required
 ```
 
 依存関係が解決できたら.envという名前の隠しファイルを作り、以下のように編集します。

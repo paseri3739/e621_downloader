@@ -4,15 +4,12 @@ This script will retrieve the e621 image URLs corresponding to the search query 
 
 # how to install
 
-This script using TypeScript for easy and safe development. I haven't prepare javascript build yet, so please install ts-node and TypeScript.
+This script using TypeScript for easy and safe development. but you can use compiled scrape_e621.js file.
 
 ```
 $ npm install
-$ npm install typescript --save-dev #if required
-$ npx install playwright #if required
 ```
-
-to install dependencies. then add ".env" file and edit following,
+then add ".env" file and edit following,
 
 ```
 USER_NAME="your_user_name"
@@ -23,7 +20,7 @@ PASSWORD="your_password"
 run
 
 ```
-ts-node scrape_e621.ts "your_search_query" number_of_download_limit
+node scrape_e621.js "your_search_query" number_of_download_limit
 ```
 
 second argument must be in quotes. third argument is integer.
