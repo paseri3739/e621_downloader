@@ -42,11 +42,14 @@ async function extractLargeFileUrlsFromPage(page: Page): Promise<string[]> {
     );
     return urls.filter((url): url is string => url !== undefined); // undefinedを除外
 }
+
 export async function saveUrlListToJson(largeFileUrls: string[], filename = 'urlList.json') {
     const jsonData = JSON.stringify(largeFileUrls, null, 2);
     fs.writeFileSync(filename, jsonData);
     console.log(`Saved URL list to ${filename}`);
-} export async function navigateToPage(page: Page, pageNumber: number): Promise<void> {
+}
+
+export async function navigateToPage(page: Page, pageNumber: number): Promise<void> {
     const url = new URL(page.url());
     url.searchParams.set('page', pageNumber.toString());
     await page.goto(url.toString());
