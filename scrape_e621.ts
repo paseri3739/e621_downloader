@@ -28,6 +28,26 @@ async function login(page: Page, url: string): Promise<Page> {
     return page;
 }
 
+function getLastNumberedPageNumber() {
+    const elements = Array.from(document.querySelectorAll('.numbered-page'));
+    if (elements.length === 0) {
+        return 1;
+    }
+
+    const lastElement = elements[elements.length - 1];
+    if (!lastElement) {
+        return 1;
+    }
+
+    const link = lastElement.querySelector('a');
+    if (link && link.textContent) {
+        return parseInt(link.textContent);
+    } else {
+        return 1;
+    }
+}
+
+
 async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount: number): Promise<string[]> {
 
     await page.click("#tags");
@@ -36,24 +56,7 @@ async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount:
     await page.click('button i.fa-solid.fa-magnifying-glass');
     await page.waitForSelector("#posts > div.paginator");
 
-    const lastNumberedPageNumber = await page.evaluate(() => {
-        const elements = Array.from(document.querySelectorAll('.numbered-page'));
-        if (elements.length === 0) {
-            return 1;
-        }
-
-        const lastElement = elements[elements.length - 1];
-        if (!lastElement) {
-            return 1;
-        }
-
-        const link = lastElement.querySelector('a');
-        if (link && link.textContent) {
-            return parseInt(link.textContent);
-        } else {
-            return 1;
-        }
-    });
+    const lastNumberedPageNumber = await page.evaluate(getLastNumberedPageNumber);
 
     console.log(lastNumberedPageNumber);
 
@@ -62,7 +65,7 @@ async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount:
     for (let i = 1; i <= lastNumberedPageNumber; i++) {
         const url: URL = new URL(page.url());
         url.searchParams.set('page', i.toString());
-	await page.waitForTimeout(1000);
+        await page.waitForTimeout(1000);
         await page.goto(url.toString());
         console.log(`Current URL: ${page.url()}`);
 
@@ -80,6 +83,7 @@ async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount:
             }
         }
     }
+
     return allLargeFileUrls;
 }
 
