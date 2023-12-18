@@ -20,7 +20,7 @@ PASSWORD="your_password"
 run
 
 ```
-node main.js "your_search_query" number_of_download_limit
+node dist/main.js "your_search_query" number_of_download_limit
 ```
 
 second argument must be in quotes. third argument is integer.
