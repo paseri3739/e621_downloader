@@ -21,7 +21,7 @@ PASSWORD="your_password"
 
 以下のようにコマンドを入力して実行してください。
 ```
-ts-node scrape_e621.ts "your_search_query" number_of_download_limit
+ts-node main.ts "your_search_query" number_of_download_limit
 ```
 第２引数はクォーテーションマークで囲って検索クエリを入力してください。第３引数には整数を指定します。
 

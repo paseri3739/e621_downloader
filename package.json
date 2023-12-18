@@ -2,7 +2,7 @@
   "name": "scrape_e621",
   "version": "1.0.0",
   "description": "e621のページを開いて直リンクのURLを取得、その後ダウンロードするために利用できるようにする。",
-  "main": "scrape_e621.ts",
+  "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

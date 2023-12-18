@@ -1,5 +1,5 @@
 import { Browser, Page, chromium } from 'playwright';
-import { PASSWORD, USER_NAME } from './scrape_e621';
+import { PASSWORD, USER_NAME } from './main';
 
 export async function initializeBrowser(): Promise<[Browser, Page]> {
     const browser: Browser = await chromium.launch({ headless: true });
