@@ -15,7 +15,7 @@ async function login(page: Page, url: string): Promise<Page> {
 
     await page.goto(url);
 
-    // R18 dialog
+    // age dialog
     if (await page.$("#guest-warning-accept")) {
         await page.click("#guest-warning-accept");
     }
@@ -24,7 +24,7 @@ async function login(page: Page, url: string): Promise<Page> {
     await page.fill("#name", USER_NAME || '');
     await page.fill("#password", PASSWORD || '');
     await page.click('input:text("Submit")');
-
+    await page.waitForTimeout(1000);
     return page;
 }
 
@@ -32,6 +32,7 @@ async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount:
 
     await page.click("#tags");
     await page.fill("#tags", searchQuery);
+    await page.waitForTimeout(1000);
     await page.click('button i.fa-solid.fa-magnifying-glass');
     await page.waitForSelector("#posts > div.paginator");
 
@@ -61,6 +62,7 @@ async function getAllImageUrl(page: Page, searchQuery: string, maxDownloadCount:
     for (let i = 1; i <= lastNumberedPageNumber; i++) {
         const url: URL = new URL(page.url());
         url.searchParams.set('page', i.toString());
+	await page.waitForTimeout(1000);
         await page.goto(url.toString());
         console.log(`Current URL: ${page.url()}`);
 
@@ -103,7 +105,7 @@ async function downloadImages(page: Page, largeFileUrls: string[], maxDownloadCo
             console.log(`Failed to download ${url}`);
         }
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 2500));
     }
 }
 
