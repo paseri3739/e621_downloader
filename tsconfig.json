@@ -11,11 +11,14 @@
         "target": "ES6",
         "sourceMap": true,
         "esModuleInterop": true,
+        "rootDir": "./src",
+        "outDir": "./dist"
     },
     "include": [
-        "/**/*.ts"
+        "src/**/*"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "dist"
     ]
 }
