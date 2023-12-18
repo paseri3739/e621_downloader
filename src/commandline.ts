@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-export function parseCommandLineArguments() {
+export function isArgumentsHasSaveUrl() {
     return process.argv.includes('--save-url');
 }
 export function validateArguments() {
