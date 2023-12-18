@@ -35,6 +35,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 var fs = require("fs");
@@ -121,7 +157,7 @@ function makeAllImageUrlList(page, searchQuery, maxDownloadCount) {
                     return [4 /*yield*/, extractLargeFileUrlsFromPage(page)];
                 case 7:
                     pageUrls = _a.sent();
-                    allLargeFileUrls.push.apply(allLargeFileUrls, pageUrls);
+                    allLargeFileUrls.push.apply(allLargeFileUrls, __spreadArray([], __read(pageUrls), false));
                     if (allLargeFileUrls.length >= maxDownloadCount) {
                         console.log("Reached max download count: ".concat(maxDownloadCount));
                         return [3 /*break*/, 9];
@@ -217,33 +253,48 @@ function writeImage(page, url, index) {
 }
 function downloadImages(page, largeFileUrls, maxDownloadCount) {
     return __awaiter(this, void 0, void 0, function () {
-        var _i, _a, _b, i, url;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, _b, _c, i, url, e_1_1;
+        var e_1, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     if (!fs.existsSync("./img")) {
                         fs.mkdirSync("./img");
                     }
-                    _i = 0, _a = largeFileUrls.entries();
-                    _c.label = 1;
+                    _e.label = 1;
                 case 1:
-                    if (!(_i < _a.length)) return [3 /*break*/, 5];
-                    _b = _a[_i], i = _b[0], url = _b[1];
+                    _e.trys.push([1, 7, 8, 9]);
+                    _a = __values(largeFileUrls.entries()), _b = _a.next();
+                    _e.label = 2;
+                case 2:
+                    if (!!_b.done) return [3 /*break*/, 6];
+                    _c = __read(_b.value, 2), i = _c[0], url = _c[1];
                     if (maxDownloadCount > 0 && i >= maxDownloadCount) {
                         console.log("Reached max download count: ".concat(maxDownloadCount));
-                        return [3 /*break*/, 5];
+                        return [3 /*break*/, 6];
                     }
                     return [4 /*yield*/, writeImage(page, url, i)];
-                case 2:
-                    _c.sent();
-                    return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 2500); })];
                 case 3:
-                    _c.sent();
-                    _c.label = 4;
+                    _e.sent();
+                    return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 2500); })];
                 case 4:
-                    _i++;
-                    return [3 /*break*/, 1];
-                case 5: return [2 /*return*/];
+                    _e.sent();
+                    _e.label = 5;
+                case 5:
+                    _b = _a.next();
+                    return [3 /*break*/, 2];
+                case 6: return [3 /*break*/, 9];
+                case 7:
+                    e_1_1 = _e.sent();
+                    e_1 = { error: e_1_1 };
+                    return [3 /*break*/, 9];
+                case 8:
+                    try {
+                        if (_b && !_b.done && (_d = _a.return)) _d.call(_a);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                    return [7 /*endfinally*/];
+                case 9: return [2 /*return*/];
             }
         });
     });
@@ -299,7 +350,7 @@ function main() {
                     _b.trys.push([1, 9, , 10]);
                     return [4 /*yield*/, initializeBrowser()];
                 case 2:
-                    _a = _b.sent(), browser = _a[0], page = _a[1];
+                    _a = __read.apply(void 0, [_b.sent(), 2]), browser = _a[0], page = _a[1];
                     return [4 /*yield*/, login(page, initUrl)];
                 case 3:
                     _b.sent();
