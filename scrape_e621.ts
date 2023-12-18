@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Browser, Page, chromium } from 'playwright';
 
 const USER_NAME = process.env.USER_NAME;
