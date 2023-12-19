@@ -4,7 +4,7 @@ This script will retrieve the e621 image URLs corresponding to the search query 
 
 # how to install
 
-This script using TypeScript for easy and safe development. but you can use compiled scrape_e621.js file.
+This script using TypeScript for easy and safe development. but you can compile main.js file to use on node.
 
 ```
 $ npm install

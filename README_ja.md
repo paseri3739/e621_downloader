@@ -4,7 +4,7 @@
 
 # インストール方法
 
-TypeScriptを利用して開発していますが、コンパイル済のscrape_e621.jsをnodeで実行できます。
+TypeScriptを利用して開発していますが、tscでコンパイルしてmain.jsをnodeで実行できます。
 
 ```
 $ npm install
@@ -22,7 +22,7 @@ PASSWORD="your_password"
 
 以下のようにコマンドを入力して実行してください。
 ```
-ts-node dist/main.ts "your_search_query"
+node dist/main.js "検索クエリ"
 ```
 ```
 node dist/main.js -h

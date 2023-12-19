@@ -17,13 +17,9 @@ async function main() {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
         const largeFileUrls = await makeAllImageUrlList(page, searchQuery, maxDownloadCount);
-
-        // save url as json
         await saveUrlListToJson(largeFileUrls, tempFilename);
-
         await downloadImages(page, largeFileUrls, maxDownloadCount, recoveryFrom);
 
-        // --save-url が指定されていない場合のみ、一時ファイルを削除
         if (!saveUrl) {
             fs.unlinkSync(tempFilename);
             console.log(`Deleted temporary file: ${tempFilename}`);
