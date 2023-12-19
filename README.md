@@ -8,6 +8,7 @@ This script using TypeScript for easy and safe development. but you can use comp
 
 ```
 $ npm install
+$ tsc
 ```
 then add ".env" file and edit following,
 
