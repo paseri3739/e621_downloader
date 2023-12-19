@@ -1,5 +1,4 @@
 import { Command } from "commander";
-import * as path from "path";
 
 function parseInteger(value: string, defaultValue: number): number {
     const parsed = parseInt(value, 10);
@@ -13,7 +12,7 @@ export function parseArguments() {
     const program = new Command();
 
     program
-        .name("node " + path.basename(__filename))
+        .name("node " + process.argv[1])
         .description("Command-line utility for image downloading.")
         .argument("<search_query>", "specify search query")
         .option("--max-download-count <count>", "specify maximum download number", (v) => parseInteger(v, Infinity))
