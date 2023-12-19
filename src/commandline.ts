@@ -2,6 +2,7 @@ import { Command } from "commander";
 
 function validateInteger(value: string, name: string) {
     const parsed = parseInt(value, 10);
+    // eliminate non-integer,negative number and String
     if (isNaN(parsed) || parsed < 0 || parsed.toString() !== value) {
         throw new Error(`Invalid argument: ${name} must be a non-negative integer.`);
     }
@@ -21,7 +22,12 @@ export function parseArguments() {
             (v) => validateInteger(v, "Max download count"),
             Infinity
         )
-        .option("-r, --recovery-from <number>", "(Optional) specify recovery starting point", (v) => validateInteger(v, "Recovery from"), 0)
+        .option(
+            "-r, --recovery-from <number>",
+            "(Optional) specify recovery starting point",
+            (v) => validateInteger(v, "Recovery from"),
+            0
+        )
         .option("-s, --save-url", "(Optional) save json temp file", undefined)
         .parse(process.argv);
 
@@ -29,5 +35,10 @@ export function parseArguments() {
 
     const searchQuery = program.args[0];
 
-    return { searchQuery, maxDownloadCount: options.maxDownloadCount, recoveryFrom: options.recoveryFrom, saveUrl: options.saveUrl };
+    return {
+        searchQuery,
+        maxDownloadCount: options.maxDownloadCount,
+        recoveryFrom: options.recoveryFrom,
+        saveUrl: options.saveUrl,
+    };
 }
