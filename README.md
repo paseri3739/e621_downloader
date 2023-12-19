@@ -21,8 +21,9 @@ PASSWORD="your_password"
 run
 
 ```
-node dist/main.js "your_search_query" number_of_download_limit
+node dist/main.js "your_search_query"
 ```
-
-second argument must be in quotes. third argument is integer.
-the script makes ./img directory. All of your downloaded images there.
+```
+node dist/main.js -h
+```
+to see all arguments

@@ -22,7 +22,10 @@ PASSWORD="your_password"
 
 以下のようにコマンドを入力して実行してください。
 ```
-ts-node dist/main.ts "your_search_query" number_of_download_limit
+ts-node dist/main.ts "your_search_query"
 ```
-第２引数はクォーテーションマークで囲って検索クエリを入力してください。第３引数には整数を指定します。
+```
+node dist/main.js -h
+```
+でコマンドライン引数が一覧できます。
 

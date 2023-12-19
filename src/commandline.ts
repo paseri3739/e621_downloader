@@ -15,9 +15,9 @@ export function parseArguments() {
         .name("node " + process.argv[1])
         .description("Command-line utility for image downloading.")
         .argument("<search_query>", "specify search query")
-        .option("--max-download-count <count>", "specify maximum download number", (v) => parseInteger(v, Infinity))
-        .option("--recovery-from <number>", "specify recovery starting point", (v) => parseInteger(v, 0))
-        .option("--save-url", "save json temp file")
+        .option("-m, --max-download-count <count>", "specify maximum download number", (v) => parseInteger(v, Infinity))
+        .option("-r, --recovery-from <number>", "specify recovery starting point", (v) => parseInteger(v, 0))
+        .option("-s, --save-url", "save json temp file")
         .parse(process.argv);
 
     const options = program.opts();
