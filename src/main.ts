@@ -1,6 +1,6 @@
 import "dotenv/config";
 import * as fs from "fs";
-import { isArgumentsHasSaveUrl, validateArguments } from "./commandline";
+import { parseArguments } from "./commandline";
 import { makeAllImageUrlList, saveUrlListToJson } from "./domParsers";
 import { initializeBrowser, login } from "./initializeBrowser";
 import { downloadImages } from "./io";
@@ -11,8 +11,7 @@ export const PASSWORD = process.env.PASSWORD;
 async function main() {
     const initUrl = "https://e621.net/session/new";
     const tempFilename = "urlList.json";
-    const { searchQuery, maxDownloadCount, recoveryFrom } = validateArguments();
-    const saveUrl = isArgumentsHasSaveUrl();
+    const { searchQuery, maxDownloadCount, recoveryFrom, saveUrl } = parseArguments();
 
     try {
         const [browser, page] = await initializeBrowser();

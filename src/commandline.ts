@@ -1,50 +1,39 @@
+import { Command } from "commander";
 import * as path from "path";
 
-export function isArgumentsHasSaveUrl() {
-    return process.argv.includes("--save-url");
-}
-export function validateArguments() {
-    if (process.argv.length < 3) {
-        showUsageAndExit();
+function parseInteger(value: string, defaultValue: number): number {
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed)) {
+        return defaultValue;
     }
+    return parsed;
+}
 
-    const searchQuery = process.argv[2];
-    if (!searchQuery) {
-        console.error("No search query provided. Usage: node app.js <search_query>");
+export function parseArguments() {
+    const program = new Command();
+
+    program
+        .name("node " + path.basename(__filename))
+        .description("Command-line utility for image downloading.")
+        .argument("<search_query>", "specify search query")
+        .option("--max-download-count <count>", "specify maximum download number", (v) => parseInteger(v, Infinity))
+        .option("--recovery-from <number>", "specify recovery starting point", (v) => parseInteger(v, 0))
+        .option("--save-url", "save json temp file")
+        .parse(process.argv);
+
+    const options = program.opts();
+
+    if (options.maxDownloadCount < 0) {
+        console.error("Invalid argument: Max download count must be a non-negative integer.");
         process.exit(1);
     }
 
-    let maxDownloadCount = Infinity;
-    let recoveryFrom = 0; // 新しい変数を初期化
+    if (options.recoveryFrom < 0) {
+        console.error("Invalid argument: Recovery from must be a non-negative integer.");
+        process.exit(1);
+    }
 
-    process.argv.forEach((arg, index) => {
-        if (arg === "--max-download-count" && process.argv[index + 1]) {
-            const parsedCount = parseInt(process.argv[index + 1], 10);
-            if (isNaN(parsedCount) || parsedCount < 0) {
-                console.error("Invalid argument: Max download count must be a non-negative integer.");
-                process.exit(1);
-            }
-            maxDownloadCount = parsedCount;
-        }
+    const searchQuery = program.args[0];
 
-        if (arg === "--recovery-from" && process.argv[index + 1]) {
-            const parsedRecovery = parseInt(process.argv[index + 1], 10);
-            if (isNaN(parsedRecovery) || parsedRecovery < 0) {
-                console.error("Invalid argument: Recovery from must be a non-negative integer.");
-                process.exit(1);
-            }
-            recoveryFrom = parsedRecovery;
-        }
-    });
-
-    return { searchQuery, maxDownloadCount, recoveryFrom }; // 更新されたリターン値
-}
-
-export function showUsageAndExit() {
-    const usage = `Usage: node ${path.basename(__filename)} <search_query> [--max-download-count <count>] [--save-url]
-    <search_query>                : specify search query
-    --max-download-count <count>  : specify maximum download number (optional)
-    --save-url                    : save json temp file (optional)`;
-    console.log(usage);
-    process.exit(1);
+    return { searchQuery, maxDownloadCount: options.maxDownloadCount, recoveryFrom: options.recoveryFrom, saveUrl: options.saveUrl };
 }
