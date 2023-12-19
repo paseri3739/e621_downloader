@@ -1,7 +1,7 @@
-import * as path from 'path';
+import * as path from "path";
 
 export function isArgumentsHasSaveUrl() {
-    return process.argv.includes('--save-url');
+    return process.argv.includes("--save-url");
 }
 export function validateArguments() {
     if (process.argv.length < 3) {
@@ -15,16 +15,29 @@ export function validateArguments() {
     }
 
     let maxDownloadCount = Infinity;
-    if (process.argv[3]) {
-        const parsedCount = parseInt(process.argv[3], 10);
-        if (isNaN(parsedCount) || parsedCount < 0) {
-            console.error("Invalid argument: Max download count must be a non-negative integer.");
-            process.exit(1);
-        }
-        maxDownloadCount = parsedCount;
-    }
+    let recoveryFrom = 0; // 新しい変数を初期化
 
-    return { searchQuery, maxDownloadCount };
+    process.argv.forEach((arg, index) => {
+        if (arg === "--max-download-count" && process.argv[index + 1]) {
+            const parsedCount = parseInt(process.argv[index + 1], 10);
+            if (isNaN(parsedCount) || parsedCount < 0) {
+                console.error("Invalid argument: Max download count must be a non-negative integer.");
+                process.exit(1);
+            }
+            maxDownloadCount = parsedCount;
+        }
+
+        if (arg === "--recovery-from" && process.argv[index + 1]) {
+            const parsedRecovery = parseInt(process.argv[index + 1], 10);
+            if (isNaN(parsedRecovery) || parsedRecovery < 0) {
+                console.error("Invalid argument: Recovery from must be a non-negative integer.");
+                process.exit(1);
+            }
+            recoveryFrom = parsedRecovery;
+        }
+    });
+
+    return { searchQuery, maxDownloadCount, recoveryFrom }; // 更新されたリターン値
 }
 
 export function showUsageAndExit() {

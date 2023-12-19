@@ -1,17 +1,17 @@
-import 'dotenv/config';
-import * as fs from 'fs';
-import { isArgumentsHasSaveUrl, validateArguments } from './commandline';
-import { makeAllImageUrlList, saveUrlListToJson } from './domParsers';
-import { initializeBrowser, login } from './initializeBrowser';
-import { downloadImages } from './io';
+import "dotenv/config";
+import * as fs from "fs";
+import { isArgumentsHasSaveUrl, validateArguments } from "./commandline";
+import { makeAllImageUrlList, saveUrlListToJson } from "./domParsers";
+import { initializeBrowser, login } from "./initializeBrowser";
+import { downloadImages } from "./io";
 
 export const USER_NAME = process.env.USER_NAME;
 export const PASSWORD = process.env.PASSWORD;
 
 async function main() {
     const initUrl = "https://e621.net/session/new";
-    const tempFilename = 'urlList.json';
-    const { searchQuery, maxDownloadCount } = validateArguments();
+    const tempFilename = "urlList.json";
+    const { searchQuery, maxDownloadCount, recoveryFrom } = validateArguments();
     const saveUrl = isArgumentsHasSaveUrl();
 
     try {
@@ -22,7 +22,7 @@ async function main() {
         // save url as json
         await saveUrlListToJson(largeFileUrls, tempFilename);
 
-        await downloadImages(page, largeFileUrls, maxDownloadCount);
+        await downloadImages(page, largeFileUrls, maxDownloadCount, recoveryFrom);
 
         // --save-url が指定されていない場合のみ、一時ファイルを削除
         if (!saveUrl) {
@@ -39,4 +39,3 @@ async function main() {
 }
 
 main();
-
