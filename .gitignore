@@ -1,7 +1,7 @@
 # images
 *.png
 *.jpg
-.DS_Store
+*.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -12,6 +12,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+*urlList.json
 .Python
 build/
 develop-eggs/

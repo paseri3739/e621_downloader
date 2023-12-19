@@ -13,8 +13,8 @@ export function parseArguments() {
 
     program
         .name("node " + process.argv[1])
-        .description("Command-line utility for image downloading.")
-        .argument("<search_query>", "specify search query")
+        .description("Command-line utility for image downloading from e621.")
+        .argument("<search_query>", "specify search query with double quote")
         .option("-m, --max-download-count <count>", "specify maximum download number", (v) => parseInteger(v, Infinity))
         .option("-r, --recovery-from <number>", "specify recovery starting point", (v) => parseInteger(v, 0))
         .option("-s, --save-url", "save json temp file")
