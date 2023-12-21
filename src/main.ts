@@ -2,7 +2,7 @@ import "dotenv/config";
 import * as fs from "fs";
 import { parseArguments } from "./commandline";
 import { makeAllImageUrlList, saveUrlListToJson } from "./domParsers";
-import { initializeBrowser, login } from "./initializeBrowser";
+import { initializeBrowser, login, search } from "./initializeBrowser";
 import { downloadImages } from "./io";
 
 export const USER_NAME = process.env.USER_NAME;
@@ -16,7 +16,8 @@ async function main() {
     try {
         const [browser, page] = await initializeBrowser();
         await login(page, initUrl);
-        const largeFileUrls = await makeAllImageUrlList(page, searchQuery, maxDownloadCount);
+        await search(page, searchQuery);
+        const largeFileUrls = await makeAllImageUrlList(page, maxDownloadCount);
         await saveUrlListToJson(largeFileUrls, tempFilename);
         await downloadImages(page, largeFileUrls, maxDownloadCount, recoveryFrom);
 
