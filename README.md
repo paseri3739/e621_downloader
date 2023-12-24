@@ -2,6 +2,11 @@
 
 This script will retrieve the e621 image URLs corresponding to the search query you specify and make them all available for download. Using playwright allows you to login and remove restrictions on viewing for non-logged-in users.
 
+# requirements
+
+node.js(npm package manager)<br>
+You can install with Homebrew, apt, snap and so on.
+
 # how to install
 
 This script using TypeScript for easy and safe development. but you can compile main.js file to use on node.
