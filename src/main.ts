@@ -2,20 +2,18 @@ import "dotenv/config";
 import * as fs from "fs";
 import { parseArguments } from "./commandline";
 import { makeAllImageUrlList, saveUrlListToJson } from "./domParsers";
-import { initializeBrowser, login, search } from "./initializeBrowser";
+import { initializeBrowser, search } from "./initializeBrowser";
 import { downloadImages } from "./io";
 
 export const USER_NAME = process.env.USER_NAME;
 export const PASSWORD = process.env.PASSWORD;
 
 async function main() {
-    const initUrl = "https://e621.net/session/new";
     const tempFilename = "urlList.json";
-    const { searchQuery, maxDownloadCount, recoveryFrom, saveUrl } = parseArguments();
+    const { searchQuery, maxDownloadCount, recoveryFrom, saveUrl, gui } = parseArguments();
 
     try {
-        const [browser, page] = await initializeBrowser();
-        await login(page, initUrl);
+        const [browser, page] = await initializeBrowser(gui);
         await search(page, searchQuery);
         const largeFileUrls = await makeAllImageUrlList(page, maxDownloadCount);
         await saveUrlListToJson(largeFileUrls, tempFilename);

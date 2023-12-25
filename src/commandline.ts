@@ -29,6 +29,8 @@ export function parseArguments() {
             0
         )
         .option("-s, --save-url", "(Optional) save json temp file", undefined)
+        // The boolean value is reversed. false to headless: !false
+        .option("-g, --gui", "(Optional) show process in GUI", false)
         .parse(process.argv);
 
     const options = program.opts();
@@ -40,5 +42,6 @@ export function parseArguments() {
         maxDownloadCount: options.maxDownloadCount,
         recoveryFrom: options.recoveryFrom,
         saveUrl: options.saveUrl,
+        gui: options.gui,
     };
 }
