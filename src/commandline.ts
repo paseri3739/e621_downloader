@@ -9,7 +9,16 @@ function validateInteger(value: string, name: string) {
     return parsed;
 }
 
-export function parseArguments() {
+// 追加: 返り値の型を定義するインターフェース
+interface ParseArgumentsResult {
+    searchQuery: string;
+    maxDownloadCount: number;
+    recoveryFrom: number;
+    saveUrl: boolean;
+    showGui: boolean;
+}
+
+export function parseArguments(): ParseArgumentsResult {
     const program = new Command();
 
     program
@@ -35,13 +44,13 @@ export function parseArguments() {
 
     const options = program.opts();
 
-    const searchQuery = program.args[0];
+    const searchQuery: string = program.args[0];
 
     return {
         searchQuery,
         maxDownloadCount: options.maxDownloadCount,
         recoveryFrom: options.recoveryFrom,
-        saveUrl: options.saveUrl,
-        gui: options.gui,
+        saveUrl: Boolean(options.saveUrl), // 明示的にboolean型に変換
+        showGui: options.gui,
     };
 }

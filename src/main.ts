@@ -10,10 +10,10 @@ export const PASSWORD = process.env.PASSWORD;
 
 async function main() {
     const tempFilename = "urlList.json";
-    const { searchQuery, maxDownloadCount, recoveryFrom, saveUrl, gui } = parseArguments();
+    const { searchQuery, maxDownloadCount, recoveryFrom, saveUrl, showGui } = parseArguments();
 
     try {
-        const [browser, page] = await initializeBrowser(gui);
+        const [browser, page] = await initializeBrowser(showGui);
         await search(page, searchQuery);
         const largeFileUrls = await makeAllImageUrlList(page, maxDownloadCount);
         await saveUrlListToJson(largeFileUrls, tempFilename);
